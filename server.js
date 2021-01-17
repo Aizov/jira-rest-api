@@ -14,7 +14,7 @@ app.get('/', async function (req, res) {
     const filtersData = await filters.getAll()
     const issuesData = await issues.getAll()
     const [usersArr, statusesArr] = await generateTable(issuesData.issues)
-    console.log(userArr)
+    console.log(usersArr)
     res.render("helloworld", {
         usersArr,
         statusesArr,
@@ -41,16 +41,20 @@ async function generateTable(issuesData) {
             for(let a = 0; a < statusData.length; a++) {
                 allStatuses[statusData[a]['id']] = 0
             }
-            // console.log(allStatuses)
+            const statuesIds = {}
+            for(let a = 0; a < statusData.length; a++) {
+                statuesIds[statusData[a]['id']] = []
+            }
 
             usersArr[i] = {
                 ['accountId']: usersData[i]['accountId'],
                 ['displayName']: usersData[i]['displayName'],
-                ['statuses']: allStatuses
+                ['statuses']: allStatuses,
+                ['statusesIds']: statuesIds
             }
 
 
-            // console.log(i, usersArr[i])
+            console.log(i, usersArr[i])
 
             issuesData.forEach((issue) => {
 
@@ -60,6 +64,9 @@ async function generateTable(issuesData) {
                     for(let a = 0; a < statusData.length; a++) {
                         if (issue['fields']['status']['id'] === statusData[a]['id']) {
                             usersArr[i]['statuses'][issue['fields']['status']['id']] += 1
+
+                            usersArr[i]['statusesIds'][issue['fields']['status']['id']].push(issue['id'])
+                            // console.log(usersArr[i]['statusesIds'][issue['fields']['status']['id']].toString())
                         }
                     }
                 }

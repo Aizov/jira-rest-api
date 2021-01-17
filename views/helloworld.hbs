@@ -24,21 +24,19 @@
   <table class="table">
     <thead>
     <tr>
+        <th>#</th>
         {{#each statusesArr}}
             <th scope="col">{{this}}</th>
         {{/each}}
     </tr>
     </thead>
     <tbody>
-    {{#each userArr}}
+    {{#each usersArr}}
       <tr>
         <td>{{this.displayName}}</td>
-
-        <td><a href="https://aiiia.atlassian.net/issues/?jql=id in ({{this.Status1.ids}})">{{this.Status1.amount}}</a></td>
-        <td><a href="https://aiiia.atlassian.net/issues/?jql=id in ({{this.Status2.ids}})">{{this.Status2.amount}}</a></td>
-        <td><a href="https://aiiia.atlassian.net/issues/?jql=id in ({{this.Status3.ids}})">{{this.Status3.amount}}</a></td>
-        <td><a href="https://aiiia.atlassian.net/issues/?jql=id in ({{this.Status4.ids}})">{{this.Status4.amount}}</a></td>
-<!--        <td>{{this.Status4}}</td> TODO: Status 5-->
+          {{#each this.statuses}}
+              <td><a href="https://aiiia.atlassian.net/issues/?jql=id in ({{@index}})">{{this}}</a></td>
+          {{/each}}
       </tr>
     {{/each}}
 
