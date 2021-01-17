@@ -2,6 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d4e5f4dd-f2bf-41ed-9ed1-ca8ab88573ad" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server.js" beforeDir="false" afterPath="$PROJECT_DIR$/../server.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../views/helloworld.hbs" beforeDir="false" afterPath="$PROJECT_DIR$/../views/helloworld.hbs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../jira/atlassian-connect.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../../jira/helloworld.html" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../../jira/views/helloworld.hbs" beforeDir="false" />
@@ -13,7 +16,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../jira" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="GitSEFilterConfiguration">
     <file-type-list>
@@ -58,7 +61,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1610874732392</updated>
-      <workItem from="1610874734902" duration="26642000" />
+      <workItem from="1610874734902" duration="29449000" />
     </task>
     <servers />
   </component>

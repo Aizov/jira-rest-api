@@ -10,66 +10,67 @@ app.set("view engine", "hbs");
 
 app.get('/', async function (req, res) {
     const issues = new Issues()
+    const filters = new Filters()
+    const filtersData = await filters.getAll()
     const issuesData = await issues.getAll()
-    const table = generateTable(issuesData.issues)
-    // res.render("helloworld", {
-    //     issuesData
-    // });
+    const [usersArr, statusesArr] = await generateTable(issuesData.issues)
+    console.log(userArr)
+    res.render("helloworld", {
+        usersArr,
+        statusesArr,
+        filtersData
+    });
 
 })
 
 async function generateTable(issuesData) {
-
     const users = new Users()
     const usersData = await users.getAll()
     const statuses = new Statuses()
     const statusData = await statuses.getAll()
 
     const statusesArr = []
-
+    for(let a = 0; a < statusData.length; a++) {
+        statusesArr.push(statusData[a]['name'])
+    }
 
     const usersArr = []
+    for (let i = 0; i < usersData.length; i++) {
+        if (usersData[i]['accountType'] === 'atlassian') {
+            const allStatuses = {}
+            for(let a = 0; a < statusData.length; a++) {
+                allStatuses[statusData[a]['id']] = 0
+            }
+            // console.log(allStatuses)
 
-        for (let i = 0; i < usersData.length; i++) {
-            if (usersData[i]['accountType'] === 'atlassian') {
-                const allStatuses = {}
-                for(let a = 0; a < statusData.length; a++) {
-                    allStatuses[statusData[a]['id']] = 0
-                }
-                console.log(allStatuses)
-
-                usersArr[i] = {
-                    ['accountId']: usersData[i]['accountId'],
-                    ['displayName']: usersData[i]['displayName'],
-                    ['statuses']: allStatuses
-                }
+            usersArr[i] = {
+                ['accountId']: usersData[i]['accountId'],
+                ['displayName']: usersData[i]['displayName'],
+                ['statuses']: allStatuses
+            }
 
 
-                console.log(i, usersArr[i])
+            // console.log(i, usersArr[i])
 
-                issuesData.forEach((issue) => {
+            issuesData.forEach((issue) => {
 
-                    // console.log(i, usersData[i])
-                    if (issue['fields']['assignee']['accountId'] === usersArr[i]['accountId']) {
+                // console.log(i, usersData[i])
+                if (issue['fields']['assignee']['accountId'] === usersData[i]['accountId']) {
 
-                        for(let a = 0; a < statusData.length; a++) {
-                            if (issue['fields']['status']['id'] === statusData[a]['id']) {
-                                usersArr[i]['statuses'][issue['fields']['status']['id']] += 1
-                            }
+                    for(let a = 0; a < statusData.length; a++) {
+                        if (issue['fields']['status']['id'] === statusData[a]['id']) {
+                            usersArr[i]['statuses'][issue['fields']['status']['id']] += 1
                         }
                     }
-                })
+                }
+            })
 
-                console.log(usersData)
-            }
+            // console.log(usersData)
         }
+    }
+    // console.log('TABLE: ', usersArr)
 
-    console.log('TABLE: ', usersArr)
-
-
-
-
-    return usersArr
+    return [usersArr, statusesArr]
 
 }
 
@@ -96,8 +97,9 @@ class Jira {
     }
 }
 class Filters extends Jira {
-    getAll(){
-        return this.get('rest/api/3/users/search')
+    async getAll(){
+        const filters = await this.get('rest/api/3/filter/search')
+        return filters.values
     }
     getById(id) {
         return this.get('rest/api/3/filter/'+id)

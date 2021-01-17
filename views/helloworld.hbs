@@ -13,7 +13,6 @@
       Select issue
     </button>
     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-
     {{#each filtersData}}
 <!--      <div>{{this.id}} - {{this.name}} - {{this.jql}}</div>-->
       <li><a onclick="async " class="dropdown-item" href="/a/{{this.id}}">{{this.name}}</a></li>
@@ -25,18 +24,16 @@
   <table class="table">
     <thead>
     <tr>
-      <th scope="col">Assignee</th>
-      <th scope="col">Status 1</th>
-      <th scope="col">Status 2</th>
-      <th scope="col">Status 3</th>
-      <th scope="col">Status 4</th>
-      <th scope="col">Status 5</th>
+        {{#each statusesArr}}
+            <th scope="col">{{this}}</th>
+        {{/each}}
     </tr>
     </thead>
     <tbody>
-    {{#each table}}
+    {{#each userArr}}
       <tr>
         <td>{{this.displayName}}</td>
+
         <td><a href="https://aiiia.atlassian.net/issues/?jql=id in ({{this.Status1.ids}})">{{this.Status1.amount}}</a></td>
         <td><a href="https://aiiia.atlassian.net/issues/?jql=id in ({{this.Status2.ids}})">{{this.Status2.amount}}</a></td>
         <td><a href="https://aiiia.atlassian.net/issues/?jql=id in ({{this.Status3.ids}})">{{this.Status3.amount}}</a></td>
