@@ -6,8 +6,9 @@
 
 </head>
 <body>
+{{{contentText}}}
 <section id="content" class="ac-content">
-  <h1>Hello World</h1>
+    <a class="text-success" href="/"><h1>Hello World</h1></a>
   <div class="dropdown">
     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
       Select issue
@@ -35,7 +36,15 @@
       <tr>
         <td>{{this.displayName}}</td>
           {{#each this.statuses}}
-              <td><a href="https://aiiia.atlassian.net/issues/?jql=id in ({{@index}})">{{this}}</a></td>
+              {{#if this.[1].ids}}
+                  <td><a href="https://aiiia.atlassian.net/issues/?jql=id in ({{this.[1].ids}})">
+                      {{this.[1].amount}}</a>
+                  </td>
+              {{else}}
+                  <td>
+                      {{this.[1].amount}}
+                  </td>
+              {{/if}}
           {{/each}}
       </tr>
     {{/each}}
