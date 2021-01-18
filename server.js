@@ -14,7 +14,7 @@ const url = 'https://aiiia.atlassian.net/'
 //     password: "root"
 // });
 const pool = mysql.createPool({
-    host: "localhost",
+    host: "database-1.c68tlakvinkf.us-east-2.rds.amazonaws.com",
     port: 3306,
     user: "admin",
     database: "database-1",
