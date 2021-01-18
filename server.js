@@ -30,7 +30,7 @@ app.get('/', async function (req, res) {
     const filters = new Filters()
     const filtersData = await filters.getAll()
     const issuesData = await issues.getAll()
-    console.log(issuesData.values)
+    // console.log(issuesData.values)
     try {
         const [usersArr, statusesArr] = await generateTable(issuesData.issues)
         res.render("helloworld", {
@@ -153,7 +153,7 @@ async function generateTable(issuesData) {
                 } ])
             }
             issuesData.forEach((issue) => {
-                console.log(issue['fields'])
+                // console.log(issue['fields'])
                 if(issue['fields']['assignee']['accountId'])
                 if (issue['fields']['assignee']['accountId'] === usersData[i]['accountId']) {
                     for(let a = 0; a < usersArr[i]['statuses'].length; a++) {
