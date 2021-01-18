@@ -27,6 +27,8 @@ app.set("view engine", "hbs");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
+app.use('/static', express.static(__dirname + '/app'));
+
 app.listen(3000)
 
 
