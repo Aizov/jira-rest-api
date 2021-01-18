@@ -153,7 +153,7 @@ async function generateTable(issuesData) {
                 } ])
             }
             issuesData.forEach((issue) => {
-                console.log(issue['fields'])
+                // console.log(issue['fields'])
 
                 if(issue['fields']['assignee'])
                 if (issue['fields']['assignee']['accountId'] === usersData[i]['accountId']) {
