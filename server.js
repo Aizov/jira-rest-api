@@ -6,12 +6,19 @@ const bodyParser = require("body-parser");
 const key = 'johnny.aizov@gmail.com:as246wBfHOsKPORfInckC52C'
 const url = 'https://aiiia.atlassian.net/'
 
+// const pool = mysql.createPool({
+//     host: "localhost",
+//     port: 8889,
+//     user: "root",
+//     database: "jira",
+//     password: "root"
+// });
 const pool = mysql.createPool({
     host: "localhost",
-    port: 8889,
-    user: "root",
-    database: "jira",
-    password: "root"
+    port: 3306,
+    user: "admin",
+    database: "database-1",
+    password: "qududu232"
 });
 
 const app = express()
