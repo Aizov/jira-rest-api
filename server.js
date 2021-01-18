@@ -39,7 +39,7 @@ app.get('/', async function (req, res) {
         });
         LogToMySQL('ididi', 'GeneratedTable', '1')// true
     } catch (e) {
-        LogToMySQL('ididi', 'GeneratedTableFailed: '+e, '0')
+        LogToMySQL('ididi', 'GeneratedTableFailed', '0')
     }
 })
 
@@ -47,6 +47,8 @@ app.get('/', async function (req, res) {
 app.post('/', function (req, res) {
     LogToMySQL('userid', 'clickToUrl: '+console.log(req.body.url), 1)
 });
+
+
 
 
 app.get('/a/:filterId', async (req, res) => {
@@ -164,13 +166,13 @@ async function generateTable(issuesData) {
     return [usersArr, statusesArr]
 }
 
-function LogToMySQL(userId, action, isOk){
+function LogToMySQL(userId = 'user', action, isOk){
     const date = require('moment')().format('YYYY-MM-DD')
     const time = require('moment')().format('HH:mm:ss')
     const sql =
         "INSERT INTO logs(`userId`, `date`, `time`, `action`, `isOk`)" +
         `VALUES('${userId}', '${date}', '${time}', '${action}', ${isOk})`;
-
+    console.log(sql)
     pool.query(sql, function (err, results) {
         if(err) console.log(err);
         else console.log("Данные добавлены");
