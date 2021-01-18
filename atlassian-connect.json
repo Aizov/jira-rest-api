@@ -2,7 +2,7 @@
   "name": "Hello World",
   "description": "Atlassian Connect app",
   "key": "com.example.myapp",
-  "baseUrl": "https://a2b07ef96535.ngrok.io",
+  "baseUrl": "https://ec2-3-23-94-123.us-east-2.compute.amazonaws.com",
   "vendor": {
     "name": "Example, Inc.",
     "url": "http://example.com"
