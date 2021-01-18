@@ -15,9 +15,7 @@
     </button>
     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
     {{#each filtersData}}
-<!--      <div>{{this.id}} - {{this.name}} - {{this.jql}}</div>-->
-      <li><a onclick="async " class="dropdown-item" href="/a/{{this.id}}">{{this.name}}</a></li>
-
+      <li><a class="dropdown-item" href="/a/{{this.id}}">{{this.name}}</a></li>
     {{/each}}
 
     </ul>
@@ -37,7 +35,8 @@
         <td>{{this.displayName}}</td>
           {{#each this.statuses}}
               {{#if this.[1].ids}}
-                  <td><a href="https://aiiia.atlassian.net/issues/?jql=id in ({{this.[1].ids}})">
+                  <td><a class="ahref" data-id = "https://aiiia.atlassian.net/issues/?jql=id in ({{this.[1].ids}})"
+                         href="https://aiiia.atlassian.net/issues/?jql=id in ({{this.[1].ids}})">
                       {{this.[1].amount}}</a>
                   </td>
               {{else}}
@@ -52,6 +51,40 @@
     </tbody>
   </table>
 </section>
+
+
+<script>
+    var refs = document.getElementsByClassName('ahref');
+    console.log(refs)
+    for(let i = 0; i < refs.length; i++) {
+        refs[i].addEventListener("click", function() {
+            console.log()
+            fetch('/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({'url' : refs[i].dataset.id})
+            })
+                    .then(function(response) {
+                        if(response.ok) {
+                            console.log('Click was recorded');
+                            return;
+                        }
+                        throw new Error('Request failed.');
+                    })
+                    .catch(function(error) {
+                        console.log(error);
+                    });
+        })
+    }
+    // refs.addEventListener('click', function(e) {
+    //     console.log('button was clicked');
+    //
+
+    // });
+
+</script>
 
 <script src="https://connect-cdn.atl-paas.net/all.js" async></script>
 <!--<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js" type="module"></script>-->

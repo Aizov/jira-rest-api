@@ -1,6 +1,10 @@
 const fetch = require('node-fetch');
 const express = require('express')
 const mysql = require("mysql2");
+const bodyParser = require("body-parser");
+
+const key = 'johnny.aizov@gmail.com:as246wBfHOsKPORfInckC52C'
+const url = 'https://aiiia.atlassian.net/'
 
 const pool = mysql.createPool({
     host: "localhost",
@@ -10,32 +14,16 @@ const pool = mysql.createPool({
     password: "root"
 });
 
-const key = 'johnny.aizov@gmail.com:as246wBfHOsKPORfInckC52C'
-const url = 'https://aiiia.atlassian.net/'
-
 const app = express()
 app.set("view engine", "hbs");
 
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
 
-app.get('/a/:filterId', async (req, res) => {
-
-    const filters = new Filters()
-    const filtersData = await filters.getAll()
-    const issues = new Issues()
-    const filter = await filters.getById(req.params.filterId)
-
-    const issuesData = await issues.getIssuesByJql(filter.jql)
-    // console.log(issuesData)
+app.listen(3000)
 
 
-    const [usersArr, statusesArr] = await generateTable(issuesData.issues)
 
-    res.render("helloworld", {
-        usersArr,
-        statusesArr,
-        filtersData
-    });
-});
 
 app.get('/', async function (req, res) {
     const issues = new Issues()
@@ -51,100 +39,38 @@ app.get('/', async function (req, res) {
         });
         LogToMySQL('ididi', 'GeneratedTable', '1')// true
     } catch (e) {
-        LogToMySQL('ididi', 'GeneratedTable', '0')// false
+        LogToMySQL('ididi', 'GeneratedTableFailed: '+e, '0')
     }
-
-
-
 })
 
-function LogToMySQL(userId, action, isOk){
-    const date = require('moment')().format('YYYY-MM-DD')
-    const time = require('moment')().format('HH:mm:ss')
-    const sql =
-        "INSERT INTO logs(`userId`, `date`, `time`, `action`, `isOk`)" +
-        `VALUES('${userId}', '${date}', '${time}', '${action}', ${isOk})`;
 
-    pool.query(sql, function (err, results) {
-        if(err) console.log(err);
-        else console.log("Данные добавлены");
-    })
-
-}
-
-//
-// app.get('/a/:filterId', async function(req, res) {
-//     const filters = new Filters()
-//     const filtersData = await filters.getAll()
-//     const issues = new Issues()
-//     console.log('sddsdsds')
-//
-//     const filter = await filters.getById(req.params.filterId)
-//     // console.log(filter)
-//     const issuesData = await issues.getIssuesByJql(filter.jql)
-//     // console.log(issuesData)
-//     const [usersArr, statusesArr] = await generateTable(issuesData.issues)
-//
-//     res.render("helloworld", {
-//         filtersData,
-//         statusesArr,
-//         usersArr
-//     });
-//
-// });
+app.post('/', function (req, res) {
+    LogToMySQL('userid', 'clickToUrl: '+console.log(req.body.url), 1)
+});
 
 
-async function generateTable(issuesData) {
-    const users = new Users()
-    const usersData = await users.getAll()
-    const statuses = new Statuses()
-    const statusData = await statuses.getAll()
+app.get('/a/:filterId', async (req, res) => {
+    const issues = new Issues()
+    const filters = new Filters()
 
-    const statusesArr = []
-    const usersArr = []
-    for(let a = 0; a < statusData.length; a++) {
-        statusesArr.push([statusData[a]['name']])
+    const filtersData = await filters.getAll()
+    const filter = await filters.getById(req.params.filterId)
+
+    const issuesData = await issues.getIssuesByJql(filter.jql)
+
+    try {
+        const [usersArr, statusesArr] = await generateTable(issuesData.issues)
+        LogToMySQL('userid', 'fiterChangeTo: '+ filter.jql, 1)
+        res.render("helloworld", {
+            usersArr,
+            statusesArr,
+            filtersData
+        });
+    } catch (e) {
+        LogToMySQL('userid', 'fiterError: '+ e, 0)
     }
+});
 
-    for (let i = 0; i < usersData.length; i++) {
-        if (usersData[i]['accountType'] === 'atlassian') {
-                usersArr[i] = {
-                    ['accountId']: usersData[i]['accountId'],
-                    ['displayName']: usersData[i]['displayName'],
-                    ['statuses']: [],
-                }
-                for(let a = 0; a < statusData.length; a++) {
-                    usersArr[i]['statuses'].push([statusData[a]['id'], {
-                        // name: statusData[a]['name'],
-                        amount: 0,
-                        ids: []
-                    } ])
-                    // console.log(usersArr[i])
-                }
-            // console.log(i, usersData[i])
-            issuesData.forEach((issue) => {
-
-                // console.log(i, usersData[i])
-                if (issue['fields']['assignee']['accountId'] === usersData[i]['accountId']) {
-                    for(let a = 0; a < usersArr[i]['statuses'].length; a++) {
-                        if (issue['fields']['status']['id'] === usersArr[i]['statuses'][a][0]) {
-                            usersArr[i]['statuses'][a][1]['amount'] += 1
-
-                            usersArr[i]['statuses'][a][1]['ids'].push(issue['id'])
-                        }
-                    }
-                }
-            })
-
-        }
-    }
-    // console.log('TABLE: ', usersArr)
-
-    return [usersArr, statusesArr]
-
-}
-
-app.listen(3000)
 
 class Jira {
     constructor() {
@@ -194,5 +120,64 @@ class Issues extends Jira {
         return this.get('rest/api/3/search?jql='+jql)
     }
 }
+
+
+
+async function generateTable(issuesData) {
+    const users = new Users()
+    const usersData = await users.getAll()
+    const statuses = new Statuses()
+    const statusData = await statuses.getAll()
+
+    const statusesArr = []
+    const usersArr = []
+    for(let a = 0; a < statusData.length; a++) {
+        statusesArr.push([statusData[a]['name']])
+    }
+
+    for (let i = 0; i < usersData.length; i++) {
+        if (usersData[i]['accountType'] === 'atlassian') {
+            usersArr[i] = {
+                ['accountId']: usersData[i]['accountId'],
+                ['displayName']: usersData[i]['displayName'],
+                ['statuses']: [],
+            }
+            for(let a = 0; a < statusData.length; a++) {
+                usersArr[i]['statuses'].push([statusData[a]['id'], {
+                    amount: 0,
+                    ids: []
+                } ])
+            }
+            issuesData.forEach((issue) => {
+                if (issue['fields']['assignee']['accountId'] === usersData[i]['accountId']) {
+                    for(let a = 0; a < usersArr[i]['statuses'].length; a++) {
+                        if (issue['fields']['status']['id'] === usersArr[i]['statuses'][a][0]) {
+                            usersArr[i]['statuses'][a][1]['amount'] += 1
+
+                            usersArr[i]['statuses'][a][1]['ids'].push(issue['id'])
+                        }
+                    }
+                }
+            })
+        }
+    }
+    return [usersArr, statusesArr]
+}
+
+function LogToMySQL(userId, action, isOk){
+    const date = require('moment')().format('YYYY-MM-DD')
+    const time = require('moment')().format('HH:mm:ss')
+    const sql =
+        "INSERT INTO logs(`userId`, `date`, `time`, `action`, `isOk`)" +
+        `VALUES('${userId}', '${date}', '${time}', '${action}', ${isOk})`;
+
+    pool.query(sql, function (err, results) {
+        if(err) console.log(err);
+        else console.log("Данные добавлены");
+    })
+}
+
+
+
 
 
